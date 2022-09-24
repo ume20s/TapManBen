@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var soundPool: SoundPool
     private var pinpon = 0
     private var bubuu = 0
-    private var countdown = arrayOf(0,0,0)
+    private var countdown = arrayOf(0,0,0,0)
 
     private var score:Int = 0               // スコア
     private var highscore:Int = 0           // ハイスコア
@@ -74,9 +74,11 @@ class MainActivity : AppCompatActivity() {
         // 音声データのロード
         pinpon = soundPool.load(this, R.raw.pinpon, 1)
         bubuu = soundPool.load(this, R.raw.buu, 1)
-        countdown[0] = soundPool.load(this, R.raw.ichi, 1)
-        countdown[1] = soundPool.load(this, R.raw.ni, 1)
-        countdown[2] = soundPool.load(this, R.raw.san, 1)
+        countdown[0] = soundPool.load(this, R.raw.ichi_test, 1)
+        countdown[1] = soundPool.load(this, R.raw.ni_test, 1)
+        countdown[2] = soundPool.load(this, R.raw.san_test, 1)
+        countdown[3] = soundPool.load(this, R.raw.start_test, 1)
+
 
         // スタートボタンへのイベントリスナの紐づけ
         val startListener = StartTap()
@@ -102,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     var i = 3
                     while (i > 0) {
-                        soundPool.play(countdown[i-1        ], 1.0f, 1.0f, 0, 0, 1.0f)
+                        soundPool.play(countdown[i-1], 1.0f, 1.0f, 0, 0, 1.0f)
                         vHandler.post {
                             findViewById<ImageView>(R.id.countdownImage).setImageResource(cd[i-1])
                         }
@@ -112,6 +114,7 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
+                soundPool.play(countdown[3], 1.0f, 1.0f, 0, 0, 1.0f)
                 findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
             })
             thread.start()
