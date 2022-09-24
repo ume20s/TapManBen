@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private var vTimer: Timer? = null
     private val vHandler = Handler()
     private var interval:Int = 100
-
+    private var remain:Int = interval
 
     // BGM再生用メディアプレーヤーのインスタンス
     private lateinit var mp: MediaPlayer
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private val pla:Int = 0     // プレーン
     private val oni:Int = 1     // おにぎり
     private val ben:Int = 2     // お弁当
+    private val taped:Int = 3   // タップ終了
 
     // スクリーンの大きさ
     private var screenWidth:Int = 0
@@ -90,8 +91,6 @@ class MainActivity : AppCompatActivity() {
         for(i in 0 until 9) {
             findViewById<ImageButton>(panel[i]).setOnClickListener(panelListener)
         }
-
-
     }
 
     // スタートボタンがタップされた時の処理
@@ -125,22 +124,34 @@ class MainActivity : AppCompatActivity() {
             vTimer!!.schedule(object : TimerTask() {
                 override fun run() {
                     vHandler.post {
-                        val alivePanel = (0..8).random()
-                        if(alive[alivePanel] == pla) {
-                            if((0..1).random() == 0){
-                                findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[oni])
-                                alive[alivePanel] = oni
+                        remain--
+                        if(remain <=0) {
+                            val alivePanel = (0..8).random()
+                            if(alive[alivePanel] == pla) {
+                                if((0..1).random() == 0){
+                                    findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[oni])
+                                    alive[alivePanel] = oni
+                                } else {
+                                    findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[ben])
+                                    alive[alivePanel] = ben
+                                }
                             } else {
-                                findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[ben])
-                                alive[alivePanel] = ben
+                                findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[pla])
+                                alive[alivePanel] = pla
                             }
+                            for (i in 0..8) {
+                                if(alive[i] == taped) {
+                                    findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
+                                    alive[i] = pla
+                                }
+                            }
+                            remain = interval
                         } else {
-                            findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[pla])
-                            alive[alivePanel] = pla
+                            remain--
                         }
                     }
                 }
-            }, 500, 500)
+            }, 3800, 10)
         }
 
     }
@@ -172,6 +183,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    alive[0] = taped
                 }
             }
             findViewById<TextView>(R.id.Score).setText(score.toString())
