@@ -100,7 +100,6 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-
     <ImageView
         android:id="@+id/imageNene"
         android:layout_width="0dp"
