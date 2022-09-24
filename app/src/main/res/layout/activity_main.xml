@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_scrren"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/h01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.00"  />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/h02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.10" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/h03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="1.00"  />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/v01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.00" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/v02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.40" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/v03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.00" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/v04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.40" />
+
+    <LinearLayout
+        android:id="@+id/areaScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="@id/h01"
+        app:layout_constraintBottom_toTopOf="@id/h02"
+        app:layout_constraintStart_toStartOf="@id/v02"
+        app:layout_constraintEnd_toEndOf="@id/v03" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:text="Score : "
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="0"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:text="HighScore : "
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/HighScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/black"
+            android:text="0"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/imageNene"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitEnd"
+        app:layout_constraintBottom_toBottomOf="@id/h03"
+        app:layout_constraintEnd_toStartOf="@id/v02"
+        app:layout_constraintStart_toStartOf="@id/v01"
+        app:layout_constraintTop_toTopOf="@id/h01"
+        app:srcCompat="@drawable/nene_test" />
+
+    <ImageView
+        android:id="@+id/imageCoco"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toBottomOf="@id/h03"
+        app:layout_constraintEnd_toStartOf="@id/v04"
+        app:layout_constraintStart_toStartOf="@id/v03"
+        app:layout_constraintTop_toTopOf="@id/h01"
+        app:srcCompat="@drawable/coco_test" />
+
+
+    <TableLayout
+        android:id="@+id/tablePanel"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/h03"
+        app:layout_constraintEnd_toEndOf="@id/v03"
+        app:layout_constraintStart_toStartOf="@id/v02"
+        app:layout_constraintTop_toTopOf="@id/h02">
+
+        <TableRow
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+
+            <ImageButton
+                android:id="@+id/ImgBtn0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/ImgBtn3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/ImgBtn6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+
+            <ImageButton
+                android:id="@+id/ImgBtn8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/plain_test" />
+        </TableRow>
+
+    </TableLayout>
+
+    <ImageView
+        android:id="@+id/countdownImage"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toTopOf="@id/h03"
+        app:layout_constraintEnd_toEndOf="@id/v03"
+        app:layout_constraintStart_toStartOf="@id/v02"
+        app:layout_constraintTop_toTopOf="@id/h02"
+        app:srcCompat="@drawable/san_test" />
+
+    <ImageButton
+        android:id="@+id/startButton"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toTopOf="@id/h03"
+        app:layout_constraintEnd_toEndOf="@id/v03"
+        app:layout_constraintStart_toStartOf="@id/v02"
+        app:layout_constraintTop_toTopOf="@id/h02"
+        app:srcCompat="@drawable/taptostart_test" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
