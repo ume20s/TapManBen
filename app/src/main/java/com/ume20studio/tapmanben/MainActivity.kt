@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
     // タイマ制御関連
     private var vTimer: Timer? = null
     private val vHandler = Handler()
+    private var interval:Int = 100
+
 
     // BGM再生用メディアプレーヤーのインスタンス
     private lateinit var mp: MediaPlayer
@@ -29,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     private var score:Int = 0               // スコア
     private var highscore:Int = 0           // ハイスコア
-    private var interval:Int = 100          // タイマインターバル
 
     // ステージ定数
     private val nene:Int = 0
