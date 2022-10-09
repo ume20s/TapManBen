@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/app_scrren"
+    android:id="@+id/app_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -69,9 +69,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@color/black"
-            android:text="Score : "
+            android:text="@string/score"
             android:textSize="18sp" />
 
         <TextView
@@ -79,29 +79,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="0"
+            android:text="@string/zero"
             android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@color/black"
-            android:text="HighScore : "
+            android:text="@string/highscore"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/HighScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:textColor="@color/black"
-            android:text="0"
+            android:text="@string/zero"
             android:textSize="18sp" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imageNene"
+        android:contentDescription="@string/nene"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitEnd"
@@ -113,6 +114,7 @@
 
     <ImageView
         android:id="@+id/imageCoco"
+        android:contentDescription="@string/coco"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitStart"
@@ -141,6 +143,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn0"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -151,6 +154,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn1"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -161,6 +165,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn2"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -177,6 +182,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn3"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -187,6 +193,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn4"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -197,6 +204,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn5"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -213,6 +221,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn6"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -223,6 +232,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn7"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -233,6 +243,7 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn8"
+                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -246,6 +257,7 @@
 
     <ImageView
         android:id="@+id/countdownImage"
+        android:contentDescription="@string/countdown"
         android:layout_width="300dp"
         android:layout_height="300dp"
         app:layout_constraintBottom_toTopOf="@id/h03"
@@ -256,12 +268,13 @@
 
     <ImageButton
         android:id="@+id/startButton"
+        android:contentDescription="@string/start"
         android:layout_width="300dp"
         android:layout_height="300dp"
         app:layout_constraintBottom_toTopOf="@id/h03"
         app:layout_constraintEnd_toEndOf="@id/v03"
         app:layout_constraintStart_toStartOf="@id/v02"
         app:layout_constraintTop_toTopOf="@id/h02"
-        app:srcCompat="@drawable/taptostart_test" />
+        app:srcCompat="@drawable/tap_to_start_test" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

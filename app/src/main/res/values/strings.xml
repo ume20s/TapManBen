@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">まんぞく弁当</string>
+    <string name="score">Score : </string>
+    <string name="highscore">HighScore : </string>
+    <string name="zero">0</string>
+    <string name="nene">ネネちゃん</string>
+    <string name="coco">ココちゃん</string>
+    <string name="panel">panel</string>
+    <string name="start">Start</string>
+    <string name="countdown">CountDown</string>
 </resources>
