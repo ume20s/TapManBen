@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // オープニングBGMスタート
+        mp = MediaPlayer.create(this,R.raw.manzoku)
+        mp.isLooping = true
+        mp.start()
+
         // サウンドプールのもろもろの初期化
         val sPattr = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build()
@@ -93,11 +98,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // スタートボタンがタップされた時の処理
+    // ゲームスタート時の処理
     private inner class StartTap : View.OnClickListener {
         override fun onClick(v: View) {
             // スタートボタンを非表示に
             findViewById<ImageButton>(R.id.startButton).visibility = View.INVISIBLE
+
+            // BGMストップ
+            mp.stop()
 
             // カウントダウン
             val thread = Thread(Runnable {
@@ -126,6 +134,14 @@ class MainActivity : AppCompatActivity() {
                     vHandler.post {
                         remain--
                         if(remain <=0) {
+                            for (i in 0..8) {
+                                if(alive[i] == taped) {
+                                    findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
+                                    alive[i] = pla
+                                    alivenum--
+                                    findViewById<TextView>(R.id.HighScore).setText(alivenum.toString())
+                                }
+                            }
                             if(alivenum < 4) {
                                 val alivePanel = (0..8).random()
                                 if(alive[alivePanel] == pla) {
@@ -137,16 +153,12 @@ class MainActivity : AppCompatActivity() {
                                         alive[alivePanel] = ben
                                     }
                                     alivenum++
+                                    findViewById<TextView>(R.id.HighScore).setText(alivenum.toString())
                                 } else {
                                     findViewById<ImageButton>(panel[alivePanel]).setImageResource(bento[pla])
+                                    alive[alivePanel] = pla
                                     alivenum--
-                                }
-                            }
-                            for (i in 0..8) {
-                                if(alive[i] == taped) {
-                                    findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
-                                    alive[i] = pla
-                                    alivenum--
+                                    findViewById<TextView>(R.id.HighScore).setText(alivenum.toString())
                                 }
                             }
                             remain = interval
@@ -163,253 +175,64 @@ class MainActivity : AppCompatActivity() {
     // パネルがタップされた時の処理
     private inner class PanelTap : View.OnClickListener {
         override fun onClick(v: View){
-            var pp:Int
+            var pp:Int = 0
 
             when(v.id){
                 panel[0] -> {
-                    when(alive[0]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[0]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[0]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[0]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[0]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[0] = taped
+                    pp = 0
                 }
                 panel[1] -> {
-                    when(alive[1]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[1]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[1]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[1]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[1]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[1] = taped
+                    pp = 1
                 }
                 panel[2] -> {
-                    when(alive[2]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[2]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[2]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[2]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[2]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[2] = taped
+                    pp = 2
                 }
                 panel[3] -> {
-                    when(alive[3]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[3]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[3]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[3]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[3]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[3] = taped
+                    pp = 3
                 }
                 panel[4] -> {
-                    when(alive[4]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[4]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[4]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[4]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[4]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[4] = taped
+                    pp = 4
                 }
                 panel[5] -> {
-                    when(alive[5]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[5]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[5]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[5]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[5]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[5] = taped
+                    pp = 5
                 }
                 panel[6] -> {
-                    when(alive[6]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[6]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[6]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[6]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[6]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[6] = taped
+                    pp = 6
                 }
                 panel[7] -> {
-                    when(alive[7]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[7]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[7]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[7]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[7]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[7] = taped
+                    pp = 7
                 }
                 panel[8] -> {
-                    when(alive[8]) {
-                        oni -> {
-                            if(stage == nene) {
-                                findViewById<ImageButton>(panel[8]).setImageResource(bentomaru[oni])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[8]).setImageResource(bentopeke[oni])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                        ben -> {
-                            if(stage == coco) {
-                                findViewById<ImageButton>(panel[8]).setImageResource(bentomaru[ben])
-                                soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score += 10
-                            } else {
-                                findViewById<ImageButton>(panel[8]).setImageResource(bentopeke[ben])
-                                soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
-                                score -= 5
-                            }
-                        }
-                    }
-                    alive[8] = taped
+                    pp = 8
                 }
             }
+            when(alive[pp]) {
+                oni -> {
+                    if(stage == nene) {
+                        findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[oni])
+                        soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
+                        score += 10
+                    } else {
+                        findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[oni])
+                        soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
+                        score -= 5
+                    }
+                    alive[pp] = taped
+                }
+                ben -> {
+                    if(stage == coco) {
+                        findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[ben])
+                        soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
+                        score += 10
+                    } else {
+                        findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[ben])
+                        soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
+                        score -= 5
+                    }
+                    alive[pp] = taped
+                }
+            }
+
             findViewById<TextView>(R.id.Score).text = score.toString()
 
             // 仮 動作確認用～
