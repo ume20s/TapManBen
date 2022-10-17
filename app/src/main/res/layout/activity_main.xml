@@ -277,4 +277,15 @@
         app:layout_constraintTop_toTopOf="@id/h02"
         app:srcCompat="@drawable/tap_to_start_test" />
 
+    <ImageView
+        android:id="@+id/stageclearImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/clear01_test" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
