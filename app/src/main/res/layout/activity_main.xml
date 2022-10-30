@@ -110,7 +110,7 @@
         app:layout_constraintEnd_toStartOf="@id/v02"
         app:layout_constraintStart_toStartOf="@id/v01"
         app:layout_constraintTop_toTopOf="@id/h01"
-        app:srcCompat="@drawable/nene_test" />
+        app:srcCompat="@drawable/nene1" />
 
     <ImageView
         android:id="@+id/imageCoco"
@@ -122,7 +122,7 @@
         app:layout_constraintEnd_toStartOf="@id/v04"
         app:layout_constraintStart_toStartOf="@id/v03"
         app:layout_constraintTop_toTopOf="@id/h01"
-        app:srcCompat="@drawable/coco_test" />
+        app:srcCompat="@drawable/coco1" />
 
 
     <TableLayout
@@ -143,36 +143,36 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn0"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn1"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn2"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
         </TableRow>
 
         <TableRow
@@ -182,36 +182,36 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn3"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn4"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn5"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
         </TableRow>
 
         <TableRow
@@ -221,36 +221,36 @@
 
             <ImageButton
                 android:id="@+id/ImgBtn6"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn7"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
 
             <ImageButton
                 android:id="@+id/ImgBtn8"
-                android:contentDescription="@string/panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/white"
+                android:contentDescription="@string/panel"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
-                app:srcCompat="@drawable/plain_test" />
+                app:srcCompat="@drawable/plain" />
         </TableRow>
 
     </TableLayout>
@@ -268,24 +268,28 @@
 
     <ImageButton
         android:id="@+id/startButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/white"
         android:contentDescription="@string/start"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:layout_constraintBottom_toTopOf="@id/h03"
-        app:layout_constraintEnd_toEndOf="@id/v03"
-        app:layout_constraintStart_toStartOf="@id/v02"
-        app:layout_constraintTop_toTopOf="@id/h02"
-        app:srcCompat="@drawable/tap_to_start_test" />
-
-    <ImageView
-        android:id="@+id/stageclearImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/clear01_test" />
+        app:srcCompat="@drawable/tap_to_start" />
+
+    <ImageButton
+        android:id="@+id/stageclearButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/white"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/clear01" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
