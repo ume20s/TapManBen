@@ -500,7 +500,7 @@
         app:layout_constraintEnd_toEndOf="@id/v03"
         app:layout_constraintStart_toStartOf="@id/v02"
         app:layout_constraintTop_toTopOf="@id/h02"
-        app:srcCompat="@drawable/san_test" />
+        app:srcCompat="@drawable/countdown3" />
 
     <ImageButton
         android:id="@+id/stageclearButton"

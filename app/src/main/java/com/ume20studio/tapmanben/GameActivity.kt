@@ -1,6 +1,7 @@
 package com.ume20studio.tapmanben
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -43,6 +44,7 @@ class GameActivity : AppCompatActivity() {
     private var highscore:Int = 0           // ハイスコア
     private var level:Int = 0               // ステージレベル
     private var isGaming:Boolean = false    // ゲーム進行中フラグ
+    private var isPausing:Boolean = false   // 一時停止中フラグ
 
     // ステージレベル別のポイントとBGM速度、間隔
     private val point = arrayOf(10, 20, 30, 40, 60, 80, 100, 120, 150, 200, 300)
@@ -68,7 +70,7 @@ class GameActivity : AppCompatActivity() {
     private var screenHeight:Int = 0
 
     // カウントダウンのイメージ配列
-    private val cd = arrayOf(R.drawable.ichi_test, R.drawable.ni_test, R.drawable.san_test)
+    private val cd = arrayOf(R.drawable.countdown1, R.drawable.countdown2, R.drawable.countdown3)
 
     // パネルのイメージボタン配列
     private val panel = arrayOf(R.id.ImgBtn0, R.id.ImgBtn1, R.id.ImgBtn2, R.id.ImgBtn3,
@@ -95,6 +97,11 @@ class GameActivity : AppCompatActivity() {
         // もとからある初期化
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        // ハイスコア読み込み（HighScoreファイルが存在しなかったら0）
+        val pref = getSharedPreferences("strage", Context.MODE_PRIVATE)
+        highscore = pref.getInt("HighScore", 0)
+        findViewById<TextView>(R.id.HighScore).text = highscore.toString()
 
         // ステージBGMの準備
         mp = MediaPlayer.create(this,R.raw.stagebgm_test)
@@ -160,6 +167,7 @@ class GameActivity : AppCompatActivity() {
             // ゲームBGMスタート
             mp.playbackParams = mp.playbackParams.setSpeed(1.001f)
             mp.start()
+            mp.seekTo(0)
             mp.playbackParams = mp.playbackParams.setSpeed(bgmspeed[level])
         }
         thread.start()
@@ -234,6 +242,7 @@ class GameActivity : AppCompatActivity() {
     private inner class PanelTap : View.OnClickListener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onClick(v: View){
+            val pref = getSharedPreferences("strage", Context.MODE_PRIVATE)
             // ゲーム進行中のみ処理
             if(isGaming) {
                 var pp = 0
@@ -271,19 +280,19 @@ class GameActivity : AppCompatActivity() {
                 when(alive[pp]) {
                     // おにぎりがタップされた
                     oni -> {
-                        if(stage == nene) { // ネネステージなら正解
+                        if(stage == coco) { // ココステージなら正解
                             // マルつけてニッコリ「ピンポン」
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[oni])
-                            findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene1)
+                            findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco1)
                             soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
                             tappoint++
-                        } else {            // ココステージなら減点
+                        } else {            // ネネステージなら減点
                             // バツつけてプンスカ「ブブー」
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[oni])
-                            findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco2)
+                            findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene2)
                             soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
@@ -295,19 +304,19 @@ class GameActivity : AppCompatActivity() {
                     }
                     // 弁当がタップされた
                     ben -> {
-                        if(stage == coco) {     // ココステージなら正解
+                        if(stage == nene) {     // ネネステージなら正解
                             // マルつけてニッコリ「ピンポン」
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[ben])
-                            findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco1)
+                            findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene1)
                             soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
                             tappoint++
-                        } else {                // ネネステージなら減点
+                        } else {                // ココステージなら減点
                             // バツつけてシクシク「ブブー」
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[ben])
-                            findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene2)
+                            findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco2)
                             soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
@@ -321,7 +330,13 @@ class GameActivity : AppCompatActivity() {
 
                 // スコア表示
                 findViewById<TextView>(R.id.Score).text = score.toString()
-                findViewById<TextView>(R.id.HighScore).text = tappoint.toString()
+
+                // ハイスコア処理
+                if(score >= highscore) {
+                    highscore = score
+                    findViewById<TextView>(R.id.HighScore).text = highscore.toString()
+                    pref.edit().putInt("HighScore", highscore).apply()
+                }
 
                 // ステージクリア
                 if(tappoint >= 3) {
@@ -499,13 +514,15 @@ class GameActivity : AppCompatActivity() {
         super.onPause()
         mp.pause()
         isGaming = false
+        isPausing = true
     }
 
     // ゲーム再開なら音楽も再開
     override fun onResume() {
         super.onResume()
-        mp.start()
+        if(isPausing == true) mp.start()
         isGaming = true
+        isPausing = false
     }
 
     // 終了ならBGMを止めて音関係のメモリを解放
