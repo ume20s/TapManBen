@@ -496,11 +496,26 @@
         android:contentDescription="@string/countdown"
         android:layout_width="300dp"
         android:layout_height="300dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/h03"
         app:layout_constraintEnd_toEndOf="@id/v03"
         app:layout_constraintStart_toStartOf="@id/v02"
         app:layout_constraintTop_toTopOf="@id/h02"
         app:srcCompat="@drawable/countdown3" />
+
+    <TextView
+        android:id="@+id/stageclearText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/pink"
+        android:textSize="55sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/stageclearButton"

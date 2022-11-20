@@ -50,8 +50,10 @@ class GameActivity : AppCompatActivity() {
     // ステージレベル別のポイントとBGM速度、間隔
     private val point = arrayOf(10, 20, 30, 40, 60, 80, 100, 120, 150, 200, 300)
     private val bgmspeed = arrayOf(0.80f, 0.90f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.25f, 1.30f, 1.40f, 1.50f)
-    private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 45, 40, 50)
-    private val ttlMax = arrayOf(300, 250, 200, 175, 150, 120, 100, 80, 60, 40, 20)
+//    private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 45, 40, 50)
+//    private val ttlMax = arrayOf(300, 250, 200, 175, 150, 120, 100, 80, 60, 40, 20)
+    private val interval = arrayOf(100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
+    private val ttlMax = arrayOf(300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300)
     private val stageChangeRate = arrayOf(10, 11, 12, 12, 14, 14, 16, 18, 20, 22, 30)
     private var remain:Int = interval[level]
 
@@ -76,6 +78,11 @@ class GameActivity : AppCompatActivity() {
     // パネルのイメージボタン配列
     private val panel = arrayOf(R.id.ImgBtn0, R.id.ImgBtn1, R.id.ImgBtn2, R.id.ImgBtn3,
         R.id.ImgBtn4, R.id.ImgBtn5, R.id.ImgBtn6, R.id.ImgBtn7, R.id.ImgBtn8)
+
+    // ステージクリアご褒美画像のイメージ配列
+    private val clear = arrayOf(R.drawable.clear01, R.drawable.clear02, R.drawable.clear03,
+        R.drawable.clear04, R.drawable.clear05, R.drawable.clear06, R.drawable.clear07,
+        R.drawable.clear08, R.drawable.clear09, R.drawable.clear10, R.drawable.clear11)
 
     // お弁当おにぎりのイメージ配列
     val bento = arrayOf(R.drawable.plain, R.drawable.onigiri, R.drawable.obento)
@@ -163,6 +170,10 @@ class GameActivity : AppCompatActivity() {
     // カウントダウンしてゲームスタート
     @RequiresApi(Build.VERSION_CODES.M)
     private fun gameStart() {
+
+        // カウントダウンイメージの表示
+        findViewById<ImageView>(R.id.countdownImage).visibility = View.VISIBLE
+
         // カウントダウン
         val thread = Thread {
             try {
@@ -358,7 +369,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージクリア
-                if(tappoint >= 5) {
+                if(tappoint >= 2) {
                     stageClear()
                 }
             }
@@ -368,34 +379,41 @@ class GameActivity : AppCompatActivity() {
     // ステージクリア＆次のステージへ
     @RequiresApi(Build.VERSION_CODES.O)
     private fun stageClear() {
-        @RequiresApi(Build.VERSION_CODES.M)
         isGaming = false
         mp.seekTo(0)
         mp.pause()
-        soundPool.stop(spID)
-
-        // レベル処理
-        if(level >= 10) {
-            level = 10
-        } else {
-            level++
-        }
-
-        // タップポイントクリア
-        tappoint = 0
-        for (i in 0..19) {
-            findViewById<ImageView>(tpoint[i]).setImageResource(R.drawable.white)
-        }
 
         // ステージクリア画面を表示
         val thread = Thread {
             try {
+                // クリアレベル表示
                 vHandler.post {
+                    findViewById<TextView>(R.id.stageclearText).text = "レベル" + (level + 1).toString() + " クリア！！"
+                    findViewById<TextView>(R.id.stageclearText).visibility = View.VISIBLE
+                }
+                Thread.sleep(2000)
+                vHandler.post {
+                    findViewById<TextView>(R.id.stageclearText).visibility = View.INVISIBLE
+                }
+
+                // ご褒美画面表示
+                vHandler.post {
+                    findViewById<ImageButton>(R.id.stageclearButton).setImageResource(clear[level])
                     findViewById<ImageButton>(R.id.stageclearButton).visibility = View.VISIBLE
                 }
-                spID = soundPool.play(vstageclear[stage][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
+                if(level == 2 || level == 6) {
+                    spID = soundPool.play(vstageclear[nene][2], 1.0f, 1.0f, 0, 0, 1.0f)
+                } else {
+                    spID = soundPool.play(vstageclear[stage][r.nextInt(2 + stage)], 1.0f, 1.0f, 0, 0, 1.0f)
+                }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
+            }
+            // レベル処理
+            if(level < 10) {
+                level++
+            } else {
+                level = 10
             }
         }
         thread.start()
@@ -405,6 +423,19 @@ class GameActivity : AppCompatActivity() {
     private inner class ClearTap : View.OnClickListener {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onClick(v: View){
+
+            // タップポイントクリア
+            tappoint = 0
+            for (i in 0..19) {
+                findViewById<ImageView>(tpoint[i]).setImageResource(R.drawable.white)
+            }
+
+            // パネルのクリア
+            alivenum = 0
+            for(i in 0..8){
+                findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
+                alive[i] = pla
+            }
 
             // ステージクリア画面を非表示にしてカウントダウン画面を表示
             findViewById<ImageButton>(R.id.stageclearButton).visibility = View.INVISIBLE
@@ -446,8 +477,12 @@ class GameActivity : AppCompatActivity() {
     private inner class PlayerCompletionListener: MediaPlayer.OnCompletionListener {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onCompletion(mp: MediaPlayer?) {
+
+            // 音関係をストップ
             isGaming = false
             mp?.seekTo(0)
+            soundPool.stop(spID)
+
             val thread = Thread {
                 // ゲーム進行中フラグをfalseに
                 isGaming = false
