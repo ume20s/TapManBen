@@ -190,9 +190,9 @@ class GameActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
-            // ステージ宣言してカウントダウン画像を非表示に
-            spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+            // カウントダウン画像を非表示に
             findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
+            spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
             // ゲームBGMスタート
             mp.playbackParams = mp.playbackParams.setSpeed(1.001f)
@@ -226,16 +226,7 @@ class GameActivity : AppCompatActivity() {
 
                         // インターバル毎にランダムにパネルを表示
                         if(remain <=0) {
-                            for (i in 0..8) {
-                                // タップ済みのパネルを消去
-                                if(alive[i] == taped) {
-                                    findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
-                                    alive[i] = pla
-                                    alivenum--
-                                }
-                            }
-
-                            // 表示パネルは最大４枚にする
+                            // 表示パネルは最大５枚にする
                             if(alivenum < 4) {
                                 val alivePanel = r.nextInt(9)
                                 if(alive[alivePanel] == pla) {
@@ -331,6 +322,7 @@ class GameActivity : AppCompatActivity() {
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.white)
                         }
                         alive[pp] = taped
+                        ttl[pp] = 100
                     }
                     // 弁当がタップされた
                     ben -> {
@@ -355,6 +347,7 @@ class GameActivity : AppCompatActivity() {
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.white)
                         }
                         alive[pp] = taped
+                        ttl[pp] = 100
                     }
                 }
 
@@ -409,12 +402,10 @@ class GameActivity : AppCompatActivity() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+
             // レベル処理
-            if(level < 10) {
-                level++
-            } else {
-                level = 10
-            }
+            level++
+            if(level > 10) level = 10
         }
         thread.start()
     }
