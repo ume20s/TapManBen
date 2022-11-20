@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import java.time.LocalTime
 import java.util.*
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class GameActivity : AppCompatActivity() {
 
@@ -100,7 +101,7 @@ class GameActivity : AppCompatActivity() {
     private var ttl = arrayOf(0,0,0,0,0,0,0,0,0,0)
     private var alivenum:Int = 0
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         // もとからある初期化
         super.onCreate(savedInstanceState)
@@ -168,11 +169,19 @@ class GameActivity : AppCompatActivity() {
     }
 
     // カウントダウンしてゲームスタート
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun gameStart() {
+
+        // ネネココステージ選択
+        if(r.nextInt(2) == 0) {
+            startNene()
+        } else {
+            startCoco()
+        }
 
         // カウントダウンイメージの表示
         findViewById<ImageView>(R.id.countdownImage).visibility = View.VISIBLE
+        findViewById<ImageView>(R.id.hidescreenImage).visibility = View.INVISIBLE
 
         // カウントダウン
         val thread = Thread {
@@ -248,7 +257,7 @@ class GameActivity : AppCompatActivity() {
 
                         // ネネココステージチェンジ
                         if(r.nextInt(10000) < stageChangeRate[level]){
-                            slideStage()
+                            changeStage()
                         }
                     }
                 }
@@ -412,7 +421,7 @@ class GameActivity : AppCompatActivity() {
 
     // ステージクリア画像がタップされた時の処理
     private inner class ClearTap : View.OnClickListener {
-        @RequiresApi(Build.VERSION_CODES.M)
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onClick(v: View){
 
             // タップポイントクリア
@@ -426,6 +435,13 @@ class GameActivity : AppCompatActivity() {
             for(i in 0..8){
                 findViewById<ImageButton>(panel[i]).setImageResource(bento[pla])
                 alive[i] = pla
+            }
+
+            // ネネココステージ選択
+            if(r.nextInt(2) == 0) {
+                startNene()
+            } else {
+                startCoco()
             }
 
             // ステージクリア画面を非表示にしてカウントダウン画面を表示
@@ -496,12 +512,6 @@ class GameActivity : AppCompatActivity() {
     private inner class GameoverTap : View.OnClickListener {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onClick(v: View){
-            // ゲームオーバー画面を非表示
-            val thread = Thread {
-                findViewById<ImageButton>(R.id.gameoverButton).visibility = View.INVISIBLE
-            }
-            thread.start()
-
             // オープニング画面へ遷移
             val intent = Intent(this@GameActivity, MainActivity::class.java)
             startActivity(intent)
@@ -509,8 +519,22 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    // ステージをスライド
-    private fun slideStage() {
+    // ネネさんスタート
+    private fun startNene() {
+        // ステージ変数neneをセットして初期位置にスライド
+        stage = nene
+        slideStage(0f, 0)
+    }
+
+    // ココさんスタート
+    private fun startCoco() {
+        // ステージ変数cocoをセットして左にスライド
+        stage = coco
+        slideStage(-screenWidth.toFloat() * 0.4f, 0)
+    }
+
+    // ステージをチェンジ
+    private fun changeStage() {
         val vec:Float
 
         // ネネとココをチェンジ
@@ -526,21 +550,30 @@ class GameActivity : AppCompatActivity() {
         spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
         // スライドアニメーション
+        slideStage(vec, 200)
+    }
+
+    // ステージをスライド
+    private fun slideStage(vec: Float, dur: Long) {
+        // 移動させるパーツの宣言
         val parts1 = findViewById<ImageView>(R.id.imageNene)
         val parts2 = findViewById<ImageView>(R.id.imageCoco)
         val parts3 = findViewById<TableLayout>(R.id.tablePanel)
         val parts4 = findViewById<LinearLayout>(R.id.areaScore)
         val parts5 = findViewById<ImageView>(R.id.countdownImage)
+        // 横方向への移動に設定
         val objectAnimator1 = ObjectAnimator.ofFloat(parts1, "translationX", vec)
         val objectAnimator2 = ObjectAnimator.ofFloat(parts2, "translationX", vec)
         val objectAnimator3 = ObjectAnimator.ofFloat(parts3, "translationX", vec)
         val objectAnimator4 = ObjectAnimator.ofFloat(parts4, "translationX", vec)
         val objectAnimator5 = ObjectAnimator.ofFloat(parts5, "translationX", vec)
-        objectAnimator1.duration = 200
-        objectAnimator2.duration = 200
-        objectAnimator3.duration = 200
-        objectAnimator4.duration = 200
-        objectAnimator5.duration = 200
+        // アニメ時間の設定
+        objectAnimator1.duration = dur
+        objectAnimator2.duration = dur
+        objectAnimator3.duration = dur
+        objectAnimator4.duration = dur
+        objectAnimator5.duration = dur
+        // アニメスタート
         objectAnimator1.start()
         objectAnimator2.start()
         objectAnimator3.start()
