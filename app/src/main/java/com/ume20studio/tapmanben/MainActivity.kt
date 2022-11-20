@@ -8,26 +8,30 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.RequiresApi
-import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
     // 乱数生成用変数
     @RequiresApi(Build.VERSION_CODES.O)
-    val r:Random = Random(LocalDateTime.now().second)
+    private val r = Random(LocalTime.now().second.toLong())
 
     // BGM再生用メディアプレーヤーのインスタンス
     private lateinit var mp:MediaPlayer
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         // もとからある初期化
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // オープニングBGMの準備
-        mp = MediaPlayer.create(this,R.raw.openingbgm)
+        if(r.nextInt(4) == 0){
+            mp = MediaPlayer.create(this,R.raw.openingbgm2)
+        } else {
+            mp = MediaPlayer.create(this,R.raw.openingbgm1)
+        }
         mp.isLooping = true
         mp.seekTo(0)
         mp.start()

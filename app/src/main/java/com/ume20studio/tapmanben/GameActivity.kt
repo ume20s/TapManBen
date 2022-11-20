@@ -13,7 +13,7 @@ import android.os.Handler
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
-import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 import kotlin.random.Random
 
@@ -25,19 +25,20 @@ class GameActivity : AppCompatActivity() {
 
     // 乱数生成用変数
     @RequiresApi(Build.VERSION_CODES.O)
-    val r: Random = Random(LocalDateTime.now().second)
+    val r: Random = Random(LocalTime.now().second)
 
     // BGM再生用メディアプレーヤーのインスタンス
     private lateinit var mp: MediaPlayer
 
     // 音声再生用サウンドプールのインスタンス
     private lateinit var soundPool: SoundPool
-    private var vpinpon = 0
-    private var vbubuu = 0
-    private var vstageclear = 0
+    private var vhit = Array(2) { IntArray(3) }
+    private var vmiss = arrayOf(0,0)
+    private var vstageclear = Array(2) { IntArray(3) }
     private var vgameover = 0
     private var vcountdown = arrayOf(0,0,0)
     private var vstage = arrayOf(0,0)
+    private var spID:Int = 0                // サウンド停止用ストリームID
 
     private var tappoint:Int = 0            // タップポイント
     private var score:Int = 0               // スコア
@@ -51,7 +52,7 @@ class GameActivity : AppCompatActivity() {
     private val bgmspeed = arrayOf(0.80f, 0.90f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.25f, 1.30f, 1.40f, 1.50f)
     private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 45, 40, 50)
     private val ttlMax = arrayOf(300, 250, 200, 175, 150, 120, 100, 80, 60, 40, 20)
-    private val stageChangeRate = arrayOf(10, 11, 12, 12, 14, 14, 16, 18, 20, 22, 24)
+    private val stageChangeRate = arrayOf(10, 11, 12, 12, 14, 14, 16, 18, 20, 22, 30)
     private var remain:Int = interval[level]
 
     // ステージ定数
@@ -110,18 +111,29 @@ class GameActivity : AppCompatActivity() {
         // サウンドプールのもろもろの初期化
         val sPattr = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build()
-        soundPool = SoundPool.Builder().setAudioAttributes(sPattr).setMaxStreams(10).build()
+        soundPool = SoundPool.Builder().setAudioAttributes(sPattr).setMaxStreams(16).build()
 
         // 音声データのロード
-        vpinpon = soundPool.load(this, R.raw.pinpon_test, 1)
-        vbubuu = soundPool.load(this, R.raw.bubuu_test, 1)
-        vstageclear = soundPool.load(this, R.raw.clear, 1)
+        vhit[nene][0] = soundPool.load(this, R.raw.nene_hit1, 1)
+        vhit[nene][1] = soundPool.load(this, R.raw.nene_hit2, 1)
+        vhit[nene][2] = soundPool.load(this, R.raw.nene_hit3, 1)
+        vhit[coco][0] = soundPool.load(this, R.raw.coco_hit1, 1)
+        vhit[coco][1] = soundPool.load(this, R.raw.coco_hit2, 1)
+        vhit[coco][2] = soundPool.load(this, R.raw.coco_hit3, 1)
+        vmiss[nene] = soundPool.load(this, R.raw.nene_miss, 1)
+        vmiss[coco] = soundPool.load(this, R.raw.coco_miss, 1)
+        vstageclear[nene][0] = soundPool.load(this, R.raw.nene_clear1, 1)
+        vstageclear[nene][1] = soundPool.load(this, R.raw.nene_clear2, 1)
+        vstageclear[nene][2] = soundPool.load(this, R.raw.nene_clear3, 1)
+        vstageclear[coco][0] = soundPool.load(this, R.raw.coco_clear1, 1)
+        vstageclear[coco][1] = soundPool.load(this, R.raw.coco_clear2, 1)
+        vstageclear[coco][2] = soundPool.load(this, R.raw.coco_clear3, 1)
         vgameover = soundPool.load(this, R.raw.gameover_test, 1)
-        vcountdown[0] = soundPool.load(this, R.raw.ichi_test, 1)
-        vcountdown[1] = soundPool.load(this, R.raw.ni_test, 1)
-        vcountdown[2] = soundPool.load(this, R.raw.san_test, 1)
-        vstage[nene] =  soundPool.load(this, R.raw.nenestage_test, 1)
-        vstage[coco] =  soundPool.load(this, R.raw.cocostage_test, 1)
+        vcountdown[0] = soundPool.load(this, R.raw.ringo_1, 1)
+        vcountdown[1] = soundPool.load(this, R.raw.ringo_2, 1)
+        vcountdown[2] = soundPool.load(this, R.raw.ringo_3, 1)
+        vstage[nene] =  soundPool.load(this, R.raw.nene_start, 1)
+        vstage[coco] =  soundPool.load(this, R.raw.coco_start, 1)
 
         // パネルへのイベントリスナの紐づけ
         val panelListener = PanelTap()
@@ -137,8 +149,15 @@ class GameActivity : AppCompatActivity() {
         val gameoverListener = GameoverTap()
         findViewById<ImageButton>(R.id.gameoverButton).setOnClickListener(gameoverListener)
 
-        // ゲームスタート
-        gameStart()
+        // soundpool読み込み完了へのイベントリスナの紐づけ
+        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (status == 0) {
+                // カウントダウンの「さん！」が読み込み完了したらゲームスタート
+                when (sampleId) {
+                    vcountdown[2] -> gameStart()
+                }
+            }
+        }
     }
 
     // カウントダウンしてゲームスタート
@@ -149,7 +168,7 @@ class GameActivity : AppCompatActivity() {
             try {
                 var i = 3
                 while (i > 0) {
-                    soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
+                    spID = soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
                     vHandler.post {
                         findViewById<ImageView>(R.id.countdownImage).setImageResource(cd[i - 1])
                     }
@@ -161,7 +180,7 @@ class GameActivity : AppCompatActivity() {
             }
 
             // ステージ宣言してカウントダウン画像を非表示に
-            soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+            spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
             findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
 
             // ゲームBGMスタート
@@ -281,19 +300,19 @@ class GameActivity : AppCompatActivity() {
                     // おにぎりがタップされた
                     oni -> {
                         if(stage == coco) { // ココステージなら正解
-                            // マルつけてニッコリ「ピンポン」
+                            // マルつけてニッコリ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[oni])
                             findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco1)
-                            soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
+                            spID = soundPool.play(vhit[coco][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
                             tappoint++
                         } else {            // ネネステージなら減点
-                            // バツつけてプンスカ「ブブー」
+                            // バツつけてプンスカ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[oni])
                             findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene2)
-                            soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
+                            spID = soundPool.play(vmiss[nene], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
                             tappoint--
@@ -305,19 +324,19 @@ class GameActivity : AppCompatActivity() {
                     // 弁当がタップされた
                     ben -> {
                         if(stage == nene) {     // ネネステージなら正解
-                            // マルつけてニッコリ「ピンポン」
+                            // マルつけてニッコリ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[ben])
                             findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene1)
-                            soundPool.play(vpinpon, 1.0f, 1.0f, 0, 0, 1.0f)
+                            spID = soundPool.play(vhit[nene][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
                             tappoint++
                         } else {                // ココステージなら減点
-                            // バツつけてシクシク「ブブー」
+                            // バツつけてシクシク
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[ben])
                             findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco2)
-                            soundPool.play(vbubuu, 1.0f, 1.0f, 0, 0, 1.0f)
+                            spID = soundPool.play(vmiss[coco], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
                             tappoint--
@@ -339,7 +358,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージクリア
-                if(tappoint >= 3) {
+                if(tappoint >= 5) {
                     stageClear()
                 }
             }
@@ -347,11 +366,13 @@ class GameActivity : AppCompatActivity() {
     }
 
     // ステージクリア＆次のステージへ
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun stageClear() {
         @RequiresApi(Build.VERSION_CODES.M)
         isGaming = false
         mp.seekTo(0)
         mp.pause()
+        soundPool.stop(spID)
 
         // レベル処理
         if(level >= 10) {
@@ -372,7 +393,7 @@ class GameActivity : AppCompatActivity() {
                 vHandler.post {
                     findViewById<ImageButton>(R.id.stageclearButton).visibility = View.VISIBLE
                 }
-                soundPool.play(vstageclear, 1.0f, 1.0f, 0, 0, 1.0f)
+                spID = soundPool.play(vstageclear[stage][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
@@ -394,7 +415,7 @@ class GameActivity : AppCompatActivity() {
                 try {
                     var i = 3
                     while (i > 0) {
-                        soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
+                        spID = soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
                         vHandler.post {
                             findViewById<ImageView>(R.id.countdownImage).setImageResource(cd[i - 1])
                         }
@@ -406,7 +427,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージ宣言してカウントダウン画像を非表示に
-                soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+                spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
                 findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
 
                 // ゲームBGMスタート
@@ -436,7 +457,7 @@ class GameActivity : AppCompatActivity() {
                     vHandler.post {
                         findViewById<ImageButton>(R.id.gameoverButton).visibility = View.VISIBLE
                     }
-                    soundPool.play(vgameover, 1.0f, 1.0f, 0, 0, 1.0f)
+                    spID = soundPool.play(vgameover, 1.0f, 1.0f, 0, 0, 1.0f)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
@@ -476,7 +497,7 @@ class GameActivity : AppCompatActivity() {
         }
 
         // ステージアナウンス
-        soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+        spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
         // スライドアニメーション
         val parts1 = findViewById<ImageView>(R.id.imageNene)
