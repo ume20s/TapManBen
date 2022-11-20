@@ -277,33 +277,15 @@ class GameActivity : AppCompatActivity() {
             if(isGaming) {
                 var pp = 0
                 when(v.id){
-                    panel[0] -> {
-                        pp = 0
-                    }
-                    panel[1] -> {
-                        pp = 1
-                    }
-                    panel[2] -> {
-                        pp = 2
-                    }
-                    panel[3] -> {
-                        pp = 3
-                    }
-                    panel[4] -> {
-                        pp = 4
-                    }
-                    panel[5] -> {
-                        pp = 5
-                    }
-                    panel[6] -> {
-                        pp = 6
-                    }
-                    panel[7] -> {
-                        pp = 7
-                    }
-                    panel[8] -> {
-                        pp = 8
-                    }
+                    panel[0] -> pp = 0
+                    panel[1] -> pp = 1
+                    panel[2] -> pp = 2
+                    panel[3] -> pp = 3
+                    panel[4] -> pp = 4
+                    panel[5] -> pp = 5
+                    panel[6] -> pp = 6
+                    panel[7] -> pp = 7
+                    panel[8] -> pp = 8
                 }
 
                 // タップしたアイテムによって処理がいろいろ
