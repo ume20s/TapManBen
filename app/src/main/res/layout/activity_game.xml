@@ -533,11 +533,10 @@
 
     <ImageButton
         android:id="@+id/gameoverButton"
-        android:contentDescription="@string/clear"
+        android:contentDescription="gameover"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/gameover_test"
+        android:background="@drawable/animationgameover"
         android:scaleType="fitCenter"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"

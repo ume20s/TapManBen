@@ -3,6 +3,7 @@ package com.ume20studio.tapmanben
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.SoundPool
@@ -16,7 +17,6 @@ import androidx.annotation.RequiresApi
 import java.time.LocalTime
 import java.util.*
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 class GameActivity : AppCompatActivity() {
 
@@ -41,6 +41,9 @@ class GameActivity : AppCompatActivity() {
     private var vstage = arrayOf(0,0)
     private var spID:Int = 0                // サウンド停止用ストリームID
 
+    // ゲームオーバー画面アニメーションのインスタンス
+    private lateinit var animationGameOver: AnimationDrawable
+
     private var tappoint:Int = 0            // タップポイント
     private var score:Int = 0               // スコア
     private var highscore:Int = 0           // ハイスコア
@@ -50,12 +53,10 @@ class GameActivity : AppCompatActivity() {
 
     // ステージレベル別のポイントとBGM速度、間隔
     private val point = arrayOf(10, 20, 30, 40, 60, 80, 100, 120, 150, 200, 300)
-    private val bgmspeed = arrayOf(0.80f, 0.90f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.25f, 1.30f, 1.40f, 1.50f)
-//    private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 45, 40, 50)
-//    private val ttlMax = arrayOf(300, 250, 200, 175, 150, 120, 100, 80, 60, 40, 20)
-    private val interval = arrayOf(100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
-    private val ttlMax = arrayOf(300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300)
-    private val stageChangeRate = arrayOf(10, 11, 12, 12, 14, 14, 16, 18, 20, 22, 30)
+    private val bgmspeed = arrayOf(0.80f, 0.90f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.30f, 1.40f, 1.60f, 1.80f)
+    private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 50, 50, 50)
+    private val ttlMax = arrayOf(300, 250, 200, 175, 150, 125, 100, 80, 60, 50, 30)
+    private val stageChangeRate = arrayOf(10, 11, 12, 12, 13, 14, 16, 20, 25, 30, 40)
     private var remain:Int = interval[level]
 
     // ステージ定数
@@ -113,13 +114,13 @@ class GameActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.HighScore).text = highscore.toString()
 
         // ステージBGMの準備
-        mp = MediaPlayer.create(this,R.raw.stagebgm_test)
+        mp = MediaPlayer.create(this,R.raw.stagebgm)
         mp.setOnCompletionListener(PlayerCompletionListener())
 
         // サウンドプールのもろもろの初期化
         val sPattr = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build()
-        soundPool = SoundPool.Builder().setAudioAttributes(sPattr).setMaxStreams(16).build()
+        soundPool = SoundPool.Builder().setAudioAttributes(sPattr).setMaxStreams(2).build()
 
         // 音声データのロード
         vhit[nene][0] = soundPool.load(this, R.raw.nene_hit1, 1)
@@ -142,6 +143,9 @@ class GameActivity : AppCompatActivity() {
         vcountdown[2] = soundPool.load(this, R.raw.ringo_3, 1)
         vstage[nene] =  soundPool.load(this, R.raw.nene_start, 1)
         vstage[coco] =  soundPool.load(this, R.raw.coco_start, 1)
+
+
+//        animationGameOver = findViewById<ImageButton>(R.id.gameoverButton).background as AnimationDrawable
 
         // パネルへのイベントリスナの紐づけ
         val panelListener = PanelTap()
@@ -353,7 +357,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージクリア
-                if(tappoint >= 2) {
+                if(tappoint >= 20) {
                     stageClear()
                 }
             }
@@ -475,6 +479,12 @@ class GameActivity : AppCompatActivity() {
             val thread = Thread {
                 // ゲーム進行中フラグをfalseに
                 isGaming = false
+
+                // ゲームオーバーアニメーションの開始
+                findViewById<ImageButton>(R.id.gameoverButton).apply {
+                    animationGameOver = background as AnimationDrawable
+                }
+                animationGameOver.start()
 
                 // ゲームオーバー画面を表示
                 try {
