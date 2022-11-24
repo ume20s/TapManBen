@@ -36,10 +36,9 @@ class GameActivity : AppCompatActivity() {
     private var vhit = Array(2) { IntArray(3) }
     private var vmiss = arrayOf(0,0)
     private var vstageclear = Array(2) { IntArray(3) }
-    private var vgameover = 0
+    private var vgameover = arrayOf(0,0)
     private var vcountdown = arrayOf(0,0,0)
     private var vstage = arrayOf(0,0)
-    private var spID:Int = 0                // サウンド停止用ストリームID
 
     // ゲームオーバー画面アニメーションのインスタンス
     private lateinit var animationGameOver: AnimationDrawable
@@ -55,7 +54,7 @@ class GameActivity : AppCompatActivity() {
     private val point = arrayOf(10, 20, 30, 40, 60, 80, 100, 120, 150, 200, 300)
     private val bgmspeed = arrayOf(0.80f, 0.90f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.30f, 1.40f, 1.60f, 1.80f)
     private val interval = arrayOf(100, 90, 80, 70, 65, 60, 55, 50, 50, 50, 50)
-    private val ttlMax = arrayOf(300, 250, 200, 175, 150, 125, 100, 80, 60, 50, 30)
+    private val ttlMax = arrayOf(300, 200, 150, 100, 90, 80, 70, 60, 50, 40, 30)
     private val stageChangeRate = arrayOf(10, 11, 12, 12, 13, 14, 16, 20, 25, 30, 40)
     private var remain:Int = interval[level]
 
@@ -137,15 +136,13 @@ class GameActivity : AppCompatActivity() {
         vstageclear[coco][0] = soundPool.load(this, R.raw.coco_clear1, 1)
         vstageclear[coco][1] = soundPool.load(this, R.raw.coco_clear2, 1)
         vstageclear[coco][2] = soundPool.load(this, R.raw.coco_clear3, 1)
-        vgameover = soundPool.load(this, R.raw.gameover_test, 1)
+        vgameover[nene] = soundPool.load(this, R.raw.nene_gameover, 1)
+        vgameover[coco] = soundPool.load(this, R.raw.coco_gameover, 1)
         vcountdown[0] = soundPool.load(this, R.raw.ringo_1, 1)
         vcountdown[1] = soundPool.load(this, R.raw.ringo_2, 1)
         vcountdown[2] = soundPool.load(this, R.raw.ringo_3, 1)
         vstage[nene] =  soundPool.load(this, R.raw.nene_start, 1)
         vstage[coco] =  soundPool.load(this, R.raw.coco_start, 1)
-
-
-//        animationGameOver = findViewById<ImageButton>(R.id.gameoverButton).background as AnimationDrawable
 
         // パネルへのイベントリスナの紐づけ
         val panelListener = PanelTap()
@@ -172,9 +169,16 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    // カウントダウンしてゲームスタート
+    // onCreateのあと画面が生成されてからの処理
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun gameStart() {
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        // もとからある初期化
+        super.onWindowFocusChanged(hasFocus)
+
+        // 画面の横幅サイズを取得
+        val view: View = findViewById(R.id.app_screen)
+        screenWidth = view.width
+        screenHeight = view.height
 
         // ネネココステージ選択
         if(r.nextInt(2) == 0) {
@@ -182,17 +186,22 @@ class GameActivity : AppCompatActivity() {
         } else {
             startCoco()
         }
+    }
+
+    // カウントダウンしてゲームスタート
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun gameStart() {
 
         // カウントダウンイメージの表示
         findViewById<ImageView>(R.id.countdownImage).visibility = View.VISIBLE
         findViewById<ImageView>(R.id.hidescreenImage).visibility = View.INVISIBLE
 
         // カウントダウン
-        val thread = Thread {
+        Thread {
             try {
                 var i = 3
                 while (i > 0) {
-                    spID = soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
+                    soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
                     vHandler.post {
                         findViewById<ImageView>(R.id.countdownImage).setImageResource(cd[i - 1])
                     }
@@ -205,15 +214,14 @@ class GameActivity : AppCompatActivity() {
 
             // カウントダウン画像を非表示に
             findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
-            spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+            soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
             // ゲームBGMスタート
             mp.playbackParams = mp.playbackParams.setSpeed(1.001f)
             mp.start()
             mp.seekTo(0)
             mp.playbackParams = mp.playbackParams.setSpeed(bgmspeed[level])
-        }
-        thread.start()
+        }.start()
 
         // タイマイベント
         vTimer = Timer()
@@ -300,7 +308,7 @@ class GameActivity : AppCompatActivity() {
                             // マルつけてニッコリ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[oni])
                             findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco1)
-                            spID = soundPool.play(vhit[coco][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
+                            soundPool.play(vhit[coco][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
@@ -309,7 +317,7 @@ class GameActivity : AppCompatActivity() {
                             // バツつけてプンスカ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[oni])
                             findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene2)
-                            spID = soundPool.play(vmiss[nene], 1.0f, 1.0f, 0, 0, 1.0f)
+                            soundPool.play(vmiss[nene], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
                             tappoint--
@@ -325,7 +333,7 @@ class GameActivity : AppCompatActivity() {
                             // マルつけてニッコリ
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentomaru[ben])
                             findViewById<ImageView>(R.id.imageNene).setImageResource(R.drawable.nene1)
-                            spID = soundPool.play(vhit[nene][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
+                            soundPool.play(vhit[nene][r.nextInt(3)], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント加算
                             score += point[level]
                             findViewById<ImageView>(tpoint[tappoint]).setImageResource(R.drawable.pink)
@@ -334,7 +342,7 @@ class GameActivity : AppCompatActivity() {
                             // バツつけてシクシク
                             findViewById<ImageButton>(panel[pp]).setImageResource(bentopeke[ben])
                             findViewById<ImageView>(R.id.imageCoco).setImageResource(R.drawable.coco2)
-                            spID = soundPool.play(vmiss[coco], 1.0f, 1.0f, 0, 0, 1.0f)
+                            soundPool.play(vmiss[coco], 1.0f, 1.0f, 0, 0, 1.0f)
                             // スコアとタップポイント減算
                             score -= point[level] / 2
                             tappoint--
@@ -357,7 +365,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージクリア
-                if(tappoint >= 20) {
+                if(tappoint >= 20                                                                                                                                                                                                                                                                                                                                                  ) {
                     stageClear()
                 }
             }
@@ -372,7 +380,7 @@ class GameActivity : AppCompatActivity() {
         mp.pause()
 
         // ステージクリア画面を表示
-        val thread = Thread {
+        Thread {
             try {
                 // クリアレベル表示
                 vHandler.post {
@@ -390,9 +398,9 @@ class GameActivity : AppCompatActivity() {
                     findViewById<ImageButton>(R.id.stageclearButton).visibility = View.VISIBLE
                 }
                 if(level == 2 || level == 6) {
-                    spID = soundPool.play(vstageclear[nene][2], 1.0f, 1.0f, 0, 0, 1.0f)
+                    soundPool.play(vstageclear[nene][2], 1.0f, 1.0f, 0, 0, 1.0f)
                 } else {
-                    spID = soundPool.play(vstageclear[stage][r.nextInt(2 + stage)], 1.0f, 1.0f, 0, 0, 1.0f)
+                    soundPool.play(vstageclear[stage][r.nextInt(2 + stage)], 1.0f, 1.0f, 0, 0, 1.0f)
                 }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -401,8 +409,7 @@ class GameActivity : AppCompatActivity() {
             // レベル処理
             level++
             if(level > 10) level = 10
-        }
-        thread.start()
+        }.start()
     }
 
     // ステージクリア画像がタップされた時の処理
@@ -435,11 +442,11 @@ class GameActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.countdownImage).visibility = View.VISIBLE
 
             // カウントダウン
-            val thread = Thread {
+            Thread {
                 try {
                     var i = 3
                     while (i > 0) {
-                        spID = soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
+                        soundPool.play(vcountdown[i - 1], 1.0f, 1.0f, 0, 0, 1.0f)
                         vHandler.post {
                             findViewById<ImageView>(R.id.countdownImage).setImageResource(cd[i - 1])
                         }
@@ -451,7 +458,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 // ステージ宣言してカウントダウン画像を非表示に
-                spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+                soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
                 findViewById<ImageView>(R.id.countdownImage).visibility = View.INVISIBLE
 
                 // ゲームBGMスタート
@@ -461,24 +468,36 @@ class GameActivity : AppCompatActivity() {
 
                 // ゲーム進行中フラグをtrueに
                 isGaming = true
-            }
-            thread.start()
+            }.start()
         }
     }
 
     // BGM終了（つまりゲームオーバー）時の処理
     private inner class PlayerCompletionListener: MediaPlayer.OnCompletionListener {
-        @RequiresApi(Build.VERSION_CODES.M)
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onCompletion(mp: MediaPlayer?) {
 
             // 音関係をストップ
             isGaming = false
             mp?.seekTo(0)
-            soundPool.stop(spID)
 
-            val thread = Thread {
+            Thread {
                 // ゲーム進行中フラグをfalseに
                 isGaming = false
+
+                // クリアレベル表示
+                vHandler.post {
+                    findViewById<TextView>(R.id.stageclearText).text = "ゲームオーバー"
+                    findViewById<TextView>(R.id.stageclearText).visibility = View.VISIBLE
+                }
+
+                // ゲームオーバー音声
+                soundPool.play(vgameover[r.nextInt(2)], 1.0f, 1.0f, 0, 0, 1.0f)
+
+                Thread.sleep(2000)
+                vHandler.post {
+                    findViewById<TextView>(R.id.stageclearText).visibility = View.INVISIBLE
+                }
 
                 // ゲームオーバーアニメーションの開始
                 findViewById<ImageButton>(R.id.gameoverButton).apply {
@@ -491,12 +510,11 @@ class GameActivity : AppCompatActivity() {
                     vHandler.post {
                         findViewById<ImageButton>(R.id.gameoverButton).visibility = View.VISIBLE
                     }
-                    spID = soundPool.play(vgameover, 1.0f, 1.0f, 0, 0, 1.0f)
+
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
-            }
-            thread.start()
+            }.start()
         }
     }
 
@@ -539,7 +557,7 @@ class GameActivity : AppCompatActivity() {
         }
 
         // ステージアナウンス
-        spID = soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+        soundPool.play(vstage[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
         // スライドアニメーション
         slideStage(vec, 200)
@@ -571,14 +589,6 @@ class GameActivity : AppCompatActivity() {
         objectAnimator3.start()
         objectAnimator4.start()
         objectAnimator5.start()
-    }
-
-    // 画面の横幅サイズを取得
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        val view: View = findViewById(R.id.app_screen)
-        screenWidth = view.width
-        screenHeight = view.height
     }
 
     // ポーズ状態なら音楽もポーズ
