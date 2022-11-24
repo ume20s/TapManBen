@@ -36,7 +36,8 @@ class GameActivity : AppCompatActivity() {
     private var vhit = Array(2) { IntArray(3) }
     private var vmiss = arrayOf(0,0)
     private var vstageclear = Array(2) { IntArray(3) }
-    private var vgameover = arrayOf(0,0)
+    private var vgameover1 = arrayOf(0,0)
+    private var vgameover2 = arrayOf(0,0)
     private var vcountdown = arrayOf(0,0,0)
     private var vstage = arrayOf(0,0)
 
@@ -136,8 +137,10 @@ class GameActivity : AppCompatActivity() {
         vstageclear[coco][0] = soundPool.load(this, R.raw.coco_clear1, 1)
         vstageclear[coco][1] = soundPool.load(this, R.raw.coco_clear2, 1)
         vstageclear[coco][2] = soundPool.load(this, R.raw.coco_clear3, 1)
-        vgameover[nene] = soundPool.load(this, R.raw.nene_gameover, 1)
-        vgameover[coco] = soundPool.load(this, R.raw.coco_gameover, 1)
+        vgameover1[nene] = soundPool.load(this, R.raw.nene_gameover1, 1)
+        vgameover2[nene] = soundPool.load(this, R.raw.nene_gameover2, 1)
+        vgameover1[coco] = soundPool.load(this, R.raw.coco_gameover1, 1)
+        vgameover2[coco] = soundPool.load(this, R.raw.coco_gameover2, 1)
         vcountdown[0] = soundPool.load(this, R.raw.ringo_1, 1)
         vcountdown[1] = soundPool.load(this, R.raw.ringo_2, 1)
         vcountdown[2] = soundPool.load(this, R.raw.ringo_3, 1)
@@ -485,16 +488,18 @@ class GameActivity : AppCompatActivity() {
                 // ゲーム進行中フラグをfalseに
                 isGaming = false
 
-                // クリアレベル表示
+                // ゲームオーバー表示
                 vHandler.post {
                     findViewById<TextView>(R.id.stageclearText).text = "ゲームオーバー"
                     findViewById<TextView>(R.id.stageclearText).visibility = View.VISIBLE
                 }
 
-                // ゲームオーバー音声
-                soundPool.play(vgameover[r.nextInt(2)], 1.0f, 1.0f, 0, 0, 1.0f)
+                // ゲームオーバー音声１
+                Thread.sleep(1000)
+                soundPool.play(vgameover1[stage], 1.0f, 1.0f, 0, 0, 1.0f)
+                Thread.sleep(3800)
 
-                Thread.sleep(2000)
+                // ゲームオーバー非表示
                 vHandler.post {
                     findViewById<TextView>(R.id.stageclearText).visibility = View.INVISIBLE
                 }
@@ -504,6 +509,9 @@ class GameActivity : AppCompatActivity() {
                     animationGameOver = background as AnimationDrawable
                 }
                 animationGameOver.start()
+
+                // ゲームオーバー音声２
+                soundPool.play(vgameover2[stage], 1.0f, 1.0f, 0, 0, 1.0f)
 
                 // ゲームオーバー画面を表示
                 try {
